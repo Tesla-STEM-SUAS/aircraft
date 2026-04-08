@@ -1,0 +1,17 @@
+IndentWidth: 4
+UseTab: Never
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
+ColumnLimit: 80
+PointerAlignment: Left
+FixNamespaceComments: true
+IndentPPDirectives: BeforeHash
+BreakBeforeBraces: Attach
+AlignAfterOpenBracket: false
+BinPackParameters: OnePerLine
+BinPackArguments: false
+BreakAfterOpenBracketBracedList: true
+BreakAfterOpenBracketIf: true
+BreakBeforeCloseBracketBracedList: true
+BreakBeforeCloseBracketFunction: true
