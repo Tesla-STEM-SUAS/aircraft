@@ -108,6 +108,7 @@ class Aircraft {
     std::shared_ptr<Mav::System> system;
     std::shared_ptr<Mav::Action> action;
     std::shared_ptr<Mav::Telemetry> telemetry;
+    std::shared_ptr<Mav::MavlinkPassthrough> mavlinkPassthrough;
     std::shared_ptr<Mav::Gimbal> gimbal;
 
   public:
@@ -122,6 +123,7 @@ class Aircraft {
 
     Aircraft();
     int init(const std::string& url);
+    void subscribe();
 
     // Blocking, waits until the aircraft is ready to arm
     void readyToArm();

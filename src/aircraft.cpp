@@ -39,21 +39,24 @@ int Aircraft::init(const std::string& url) {
         std::cerr << "Timed out waiting for system\n";
         return 1;
     }
-
-    Mav::MavlinkPassthrough mavlinkPassthrough(this->system);
-    mavlinkPassthrough.subscribe_message(MAVLINK_MSG_ID_SYS_STATUS,
-        [&](const mavlink_message_t& message) {
-            mavlink_sys_status_t status;
-
-            mavlink_msg_sys_status_decode(&message, &status);
-
-            this->data.system.cpu = static_cast<float>(status.load) / 10000;
-        });
-
+    
     this->telemetry = std::make_shared<Mav::Telemetry>(system);
     this->action = std::make_shared<Mav::Action>(system);
     this->gimbal = std::make_shared<Mav::Gimbal>(system);
+    this->mavlinkPassthrough =
+        std::make_shared<Mav::MavlinkPassthrough>(this->system);
 
+    const auto setRateResult =
+        this->telemetry->set_rate_position(Aircraft::TELEMETRY_RATE);
+    if (setRateResult != Mav::Telemetry::Result::Success) {
+        std::cerr << "Setting rate failed: " << setRateResult << '\n';
+        return 1;
+    }
+
+    return 0;
+}
+
+void Aircraft::subscribe() {
     this->gimbal->subscribe_attitude([&](Mav::Gimbal::Attitude attitude) {
         this->data.gimbal.pitch = attitude.euler_angle_forward.pitch_deg;
         this->data.gimbal.yaw = attitude.euler_angle_forward.yaw_deg;
@@ -70,14 +73,6 @@ int Aircraft::init(const std::string& url) {
             this->data.battery.runtime = battery.time_remaining_s;
         }
     );
-
-    const auto setRateResult =
-        this->telemetry->set_rate_position(Aircraft::TELEMETRY_RATE);
-    if (setRateResult != Mav::Telemetry::Result::Success) {
-        std::cerr << "Setting rate failed: " << setRateResult << '\n';
-        return 1;
-    }
-
     this->telemetry->subscribe_position(
         [&](const Mav::Telemetry::Position& position) {
             this->data.latitude = position.latitude_deg;
@@ -90,8 +85,14 @@ int Aircraft::init(const std::string& url) {
                 );
         }
     );
+    this->mavlinkPassthrough->subscribe_message(MAVLINK_MSG_ID_SYS_STATUS,
+        [&](const mavlink_message_t& message) {
+            mavlink_sys_status_t status;
 
-    return 0;
+            mavlink_msg_sys_status_decode(&message, &status);
+
+            this->data.system.cpu = static_cast<float>(status.load) / 10000;
+        });
 }
 
 void Aircraft::readyToArm() {
