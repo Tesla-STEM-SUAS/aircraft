@@ -1,5 +1,8 @@
-# Build folders
+# Build folders and dependencies
 out/
+build/
+
+extern/
 
 # Visual Studio files
 .vs/
