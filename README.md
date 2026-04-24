@@ -15,7 +15,7 @@ Windows is the only supported operating system; support for Linux and Android ma
 
 These dependencies are expected to be in the `extern/` directory.
 
-Run `.\install.ps1` to install all required dependencies automatically, including the MSVC++ Build Tools and CMake, if they are not already installed.
+Run [`.\install.ps1`](install.ps1) to automatically install all required dependencies, including the MSVC++ Build Tools and CMake, if they are not already installed.
 
 ## Building from source
 
