@@ -20,13 +20,7 @@ AUTHOR: ETHAN CHAN
 
 namespace Aircraft {
 Camera::Camera() {
-    {
-        bool exists;
-        this->rtspUrl = settings.get<std::string>("camera.rtsp_url", exists);
-        if (!exists) {
-            std::cerr << "rtsp URL not found in settings\n";
-        }
-    }
+    this->rtspUrl = settings.get<std::string>("camera.rtsp_url").first;
 
     this->capture.open(this->rtspUrl, cv::CAP_FFMPEG);
 }
